@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imap One | Loteamentos</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #D4AF37;
+            --primary-hover: #b8941e;
+            --dark: #121212;
+            --dark-gray: #181818;
+            --medium-gray: #242424;
+            --light: #EAEAEA;
+            --text-gray: #A0A0A0;
+            --white: #FFFFFF;
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        html { 
+            scroll-behavior: smooth;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            color: var(--white);
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* HEADER & NAVIGATION */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: 0.4s;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            box-sizing: border-box;
+        }
+
+        header.scrolled {
+            background: rgba(18, 18, 18, 0.98);
+            padding: 1rem 5%;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        
+        .logo span { color: var(--primary); }
+
+        /* Controles do Header (Idioma + Menu) */
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        #lang-toggle {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+        }
+        #lang-toggle:hover { background: var(--primary); color: #000; }
+
+        .hamburger { 
+            display: block; 
+            font-size: 1.5rem; 
+            color: var(--white); 
+            cursor: pointer; 
+            transition: color 0.3s;
+        }
+        .hamburger:hover { color: var(--primary); }
+
+        /* Menu de Navegação (Estilo Slide Down) */
+        .nav-links {
+            display: none; 
+            flex-direction: column;
+            position: fixed;
+            top: 80px; 
+            left: 0;
+            right: 0;
+            background: rgba(18, 18, 18, 0.98);
+            padding: 2rem;
+            gap: 1.5rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            text-align: center;
+            z-index: 999;
+        }
+        
+        .nav-links.mobile-active {
+            display: flex;
+            animation: slideDown 0.3s ease;
+        }
+
+        .nav-links a { 
+            font-size: 0.8rem; 
+            font-weight: 500; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            color: #ccc; 
+            padding: 10px;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover { color: var(--primary); }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            border-radius: 0px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-gold {
+            background: var(--primary);
+            color: #000;
+            border: 1px solid var(--primary);
+        }
+
+        .btn-gold:hover {
+            background: transparent;
+            color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.5);
+        }
+
+        /* HERO */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            padding: 0 20px;
+        }
+
+        #hero-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.4;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, var(--dark) 90%);
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            max-width: 900px;
+        }
+
+        .hero-subtitle {
+            color: var(--primary);
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 2.5rem;
+            line-height: 1.2;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.8);
+            color: var(--white);
+        }
+
+        .hero p {
+            font-size: 1rem;
+            color: #f0f0f0;
+            margin-bottom: 2.5rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 300;
+        }
+
+        .scroll-down {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--primary);
+            animation: bounce 2s infinite;
+            z-index: 10;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
+            40% {transform: translateX(-50%) translateY(-10px);}
+            60% {transform: translateX(-50%) translateY(-5px);}
+        }
+
+        /* SECTIONS */
+        section {
+            padding: 7rem 2rem;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-header h2 {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .section-header p { 
+            color: var(--text-gray); 
+            max-width: 600px; 
+            margin: 0 auto; 
+            font-size: 1.1rem; 
+        }
+
+        .divider { 
+            width: 80px; 
+            height: 2px; 
+            background-color: var(--primary); 
+            margin: 1.5rem auto; 
+        }
+
+        /* FEATURES GRID */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2.5rem;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border-color: var(--primary);
+        }
+
+        .feature-card:hover::before { transform: scaleX(1); }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 { 
+            font-size: 1.5rem; 
+            margin-bottom: 1rem; 
+            color: var(--white);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+        }
+        
+        .feature-card p { 
+            color: var(--text-gray); 
+            font-size: 0.95rem; 
+        }
+
+        /* PREVIEW SECTION */
+        .preview-section {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+
+        .preview-text { flex: 1; min-width: 300px; }
+        
+        .preview-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .preview-text p {
+            color: var(--text-gray);
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+
+        .preview-text ul {
+            margin-bottom: 2rem;
+        }
+
+        .preview-text ul li {
+            color: var(--text-gray);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .preview-text ul li i {
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .preview-image { 
+            flex: 1.2; 
+            min-width: 300px; 
+            position: relative;
+        }
+
+        .mockup {
+            width: 100%;
+            border-radius: 4px;
+            box-shadow: 20px 20px 0px rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            background: #222;
+            min-height: 350px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        
+        .mockup img {
+            width: 100%;
+            height: auto;
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+        
+        .mockup:hover img { 
+            opacity: 1; 
+            transform: scale(1.02); 
+        }
+
+        /* FAQ SECTION */
+        .faq-section {
+            background-color: var(--medium-gray);
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .faq-question {
+            width: 100%;
+            padding: 1.5rem 0;
+            background: transparent;
+            border: none;
+            color: var(--light);
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 500;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .faq-question:hover { color: var(--primary); }
+        
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-question { color: var(--primary); }
+        .faq-item.active .faq-icon { transform: rotate(45deg); color: var(--primary); }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            color: var(--text-gray);
+            font-size: 0.95rem;
+        }
+
+        .faq-item.active .faq-answer { 
+            padding-bottom: 1.5rem; 
+            max-height: 300px; 
+        }
+
+        /* CTA FINAL */
+        .final-cta {
+            background: url('https://images.unsplash.com/photo-1519046904884-53103b34b271?q=80&w=2070&auto=format&fit=crop') fixed center/cover;
+            text-align: center;
+            padding: 8rem 2rem;
+            position: relative;
+        }
+
+        .final-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-content h2 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--white);
+        }
+
+        .cta-content p {
+            margin-bottom: 3rem;
+            color: #ddd;
+            font-size: 1.2rem;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #050505;
+            padding: 5rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid #222;
+            color: #777;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 4rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-logo { 
+            font-size: 1.8rem; 
+            font-weight: 700; 
+            color: var(--white); 
+            margin-bottom: 1rem; 
+            display: block; 
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .footer-logo span { color: var(--primary); }
+        
+        .footer-col h4 { 
+            color: var(--white); 
+            margin-bottom: 1.5rem; 
+            font-size: 1rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            font-family: 'Montserrat', sans-serif; 
+        }
+        
+        .footer-col ul li { margin-bottom: 0.8rem; }
+        .footer-col ul li a { 
+            font-size: 0.9rem; 
+            transition: 0.3s; 
+        }
+        .footer-col ul li a:hover { 
+            color: var(--primary); 
+            padding-left: 5px; 
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #222;
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .footer-about { text-align: center; }
+
+        /* RESPONSIVE */
+        @media (max-width: 992px) {
+            .preview-section { flex-direction: column-reverse; }
+            .footer-content { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero-subtitle { font-size: 0.85rem; }
+            .section-header h2 { font-size: 2rem; }
+            .footer-content { grid-template-columns: 1fr; text-align: center; }
+            .footer-bottom { flex-direction: column; gap: 1rem; }
+            .btn { padding: 0.9rem 2rem; font-size: 0.75rem; }
+            .cta-content h2 { font-size: 2rem; }
+            .cta-content p { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="header">
+        <a href="#" class="logo">
+            IMAP<span>ONE loteamentos</span>
+        </a>
+        
+        <div class="header-controls">
+            <div id="lang-toggle" onclick="toggleLanguage()">PT</div>
+            <div class="hamburger" onclick="toggleMenu()">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+        
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#inicio" onclick="closeMenu()" data-i18n="nav-home">Início</a></li>
+            <li><a href="#funcionalidades" onclick="closeMenu()" data-i18n="nav-features">Funcionalidades</a></li>
+            <li><a href="#diferenciais" onclick="closeMenu()" data-i18n="nav-diff">Diferenciais</a></li>
+            <li><a href="#faq" onclick="closeMenu()" data-i18n="nav-faq">Dúvidas</a></li>
+        </ul>
+    </header>
+
+    <section id="inicio" class="hero">
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-overlay"></div>
+        
+        <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
+            <p class="hero-subtitle" data-i18n="hero-sub">Mapas Interativos para Loteamentos</p>
+            <h1 data-i18n="hero-title">Visualize e Gerencie<br>Seus Lotes no Mapa</h1>
+            <p data-i18n="hero-text">Crie mapas profissionais dos seus loteamentos com status de vendas em tempo real. Seus clientes navegam, você controla.</p>
+            
+            <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="https://imaponeofficial.github.io/sol-poente/" class="btn btn-gold" style="padding: 15px 40px; font-size: 0.9rem;">
+                    <i class="fa-solid fa-rocket" style="margin-right: 10px;"></i> <span data-i18n="btn-demo">Ver Demonstração</span>
+                </a>
+            </div>
+        </div>
+
+        <a href="#funcionalidades" class="scroll-down">
+            <i class="fa-solid fa-chevron-down fa-2x"></i>
+        </a>
+    </section>
+
+    <section id="funcionalidades">
+        <div class="section-header" data-aos="fade-up">
+            <h2 data-i18n="feat-title">O Que Você Pode Fazer</h2>
+            <div class="divider"></div>
+            <p data-i18n="feat-sub">Ferramentas essenciais para gestão visual de loteamentos.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon"><i class="fa-solid fa-map-marked-alt"></i></div>
+                <h3 data-i18n="card-1-t">Mapas Interativos</h3>
+                <p data-i18n="card-1-d">Transforme a planta do seu loteamento em um mapa navegável. Seus clientes exploram cada lote com zoom, satélite e filtros.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon"><i class="fa-solid fa-sync-alt"></i></div>
+                <h3 data-i18n="card-2-t">Status em Tempo Real</h3>
+                <p data-i18n="card-2-d">Atualize o status dos lotes (Disponível, Reservado, Vendido) e veja as mudanças instantaneamente no mapa online.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-icon"><i class="fa-solid fa-file-code"></i></div>
+                <h3 data-i18n="card-3-t">Importação GeoJSON</h3>
+                <p data-i18n="card-3-d">Já tem o arquivo vetorial da planta? Importe diretamente no formato GeoJSON e tenha todos os lotes mapeados automaticamente.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-icon"><i class="fa-solid fa-cloud-upload-alt"></i></div>
+                <h3 data-i18n="card-4-t">Hospedagem Inclusa</h3>
+                <p data-i18n="card-4-d">Publicamos seu mapa gratuitamente no GitHub Pages. Sem complicação, sem custos extras de servidor.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-icon"><i class="fa-brands fa-whatsapp"></i></div>
+                <h3 data-i18n="card-5-t">Botão WhatsApp</h3>
+                <p data-i18n="card-5-d">Cada lote disponível tem um botão direto para o seu WhatsApp. O cliente clica e já inicia a conversa com você.</p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
+                <div class="feature-icon"><i class="fa-solid fa-mobile-alt"></i></div>
+                <h3 data-i18n="card-6-t">100% Responsivo</h3>
+                <p data-i18n="card-6-d">Funciona perfeitamente em celular, tablet e computador. Seus clientes acessam de qualquer dispositivo.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="diferenciais" style="background-color: var(--dark-gray);">
+        <div class="preview-section">
+            <div class="preview-text" data-aos="fade-right">
+                <h2 data-i18n="diff-title">Nosso Grande Diferencial</h2>
+                <p data-i18n="diff-text">
+                    Muitas plataformas travam você em criativos estáticos, sem interatividade pro cliente. <strong>Nós oferecemos a solução</strong> — você encaminha o link para seus clientes e o mapa está pronto para usar onde quiser.
+                </p>
+                <ul>
+                    <li><i class="fa-solid fa-check"></i> <span data-i18n="diff-li-1"><strong>Arquivo HTML completo</strong> com o mapa funcionando</span></li>
+                    <li><i class="fa-solid fa-check"></i> <span data-i18n="diff-li-2"><strong>Hospedagem gratuita:</strong> seu loteamento sempre online</span></li>
+                    <li><i class="fa-solid fa-check"></i> <span data-i18n="diff-li-3"><strong>Painel admin integrado</strong> com senha para você atualizar lotes</span></li>
+                    <li><i class="fa-solid fa-check"></i> <span data-i18n="diff-li-4"><strong>Sincronizado em nuvem:</strong> mudanças aparecem em todos os dispositivos</span></li>
+                    <li><i class="fa-solid fa-check"></i> <span data-i18n="diff-li-5"><strong>Rota personalizada:</strong> o mapa mostra pro cliente a distância e tempo estimado</span></li>
+                </ul>
+                <p style="color: var(--primary); font-weight: 600; margin-top: 1.5rem;" data-i18n="diff-highlight">
+                    Ideal para quem quer facilitar a gestão dos lotes em tempo real, oferecendo uma experiência Premium a seus clientes.
+                </p>
+            </div>
+            
+            <div class="preview-image" data-aos="fade-left">
+                <div class="mockup">
+                    <img src="../img/exemplo.png" alt="Demonstração do sistema">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="faq-section">
+        <div class="section-header" data-aos="fade-up">
+            <h2 data-i18n="faq-title">Perguntas Frequentes</h2>
+            <div class="divider"></div>
+            <p data-i18n="faq-sub">Tire suas dúvidas sobre o sistema.</p>
+        </div>
+
+        <div class="faq-container" data-aos="fade-up">
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span data-i18n="faq-1-q">Como funciona o modelo de cobrança?</span>
+                    <i class="fas fa-plus faq-icon"></i>
+                </div>
+                <div class="faq-answer" data-i18n="faq-1-a">
+                    Trabalhamos com duas opções: <strong>Loteamento Digital Estático</strong> (pagamento único) e <strong>Loteamento com Gestão</strong> (setup + mensalidade para acesso ao painel). Entre em contato para conhecer os valores e escolher o melhor plano para você.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span data-i18n="faq-2-q">O que é o arquivo standalone?</span>
+                    <i class="fas fa-plus faq-icon"></i>
+                </div>
+                <div class="faq-answer" data-i18n="faq-2-a">
+                    É um arquivo HTML completo e independente com o mapa do seu loteamento. Você pode hospedar no GitHub Pages (gratuito), versel, etc com seu próprio domínio ou utilizar a nossa hospedagem gratuita. Inclui painel administrativo com senha para você gerenciar os status dos lotes.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span data-i18n="faq-3-q">Preciso de conhecimento técnico?</span>
+                    <i class="fas fa-plus faq-icon"></i>
+                </div>
+                <div class="faq-answer" data-i18n="faq-3-a">
+                    Não! Você fornece a planta (PDF, DWG ou GeoJSON) e nós criamos tudo. Para atualizar status dos lotes, basta acessar o painel com sua senha — simples como usar WhatsApp.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span data-i18n="faq-4-q">O mapa funciona offline?</span>
+                    <i class="fas fa-plus faq-icon"></i>
+                </div>
+                <div class="faq-answer" data-i18n="faq-4-a">
+                    Não. O mapa precisa de internet para carregar as camadas de satélite e sincronizar os dados dos lotes. Mas o consumo de dados é mínimo e otimizado.
+                </div>
+            </div>
+            
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span data-i18n="faq-5-q">Posso personalizar as cores e ícones?</span>
+                    <i class="fas fa-plus faq-icon"></i>
+                </div>
+                <div class="faq-answer" data-i18n="faq-5-a">
+                    Não. As cores para cada tipo de área (lotes, ruas, áreas verdes, lagos) são padrões, caso tenha uma área diferente das citadas podemos personalizar a cor.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span data-i18n="faq-6-q">Quantos lotes posso cadastrar?</span>
+                    <i class="fas fa-plus faq-icon"></i>
+                </div>
+                <div class="faq-answer" data-i18n="faq-6-a">
+                    O valor base cobre até 100 lotes. Para cada 50 lotes adicionais, há um acréscimo no setup. Entre em contato para orçamento personalizado se seu empreendimento for maior.
+                </div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question">
+                    <span data-i18n="faq-7-q">Os dados ficam seguros?</span>
+                    <i class="fas fa-plus faq-icon"></i>
+                </div>
+                <div class="faq-answer" data-i18n="faq-7-a">
+                    Sim. Utilizamos o Supabase, uma infraestrutura robusta com criptografia e backups automáticos. Apenas você tem acesso ao painel administrativo através da sua senha exclusiva.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="final-cta">
+        <div class="cta-content" data-aos="zoom-in">
+            <h2 data-i18n="cta-title">Pronto para Modernizar Suas Vendas?</h2>
+            <p data-i18n="cta-text">Entre em contato e receba um orçamento personalizado para o seu loteamento.</p>
+            <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="https://wa.me/5585996138679?text=Olá!%20Quero%20criar%20um%20mapa%20interativo%20para%20meu%20loteamento" class="btn btn-gold" style="padding: 20px 60px; font-size: 1rem;">
+                    <i class="fab fa-whatsapp" style="margin-right: 10px;"></i> <span data-i18n="btn-contact">Solicitar Orçamento</span>
+                </a>
+                <a href="https://imaponeofficial.github.io/sol-poente/" class="btn" style="padding: 20px 60px; font-size: 1rem; background: transparent; border: 2px solid var(--primary); color: var(--primary);">
+                    <i class="fa-solid fa-eye" style="margin-right: 10px;"></i> <span data-i18n="btn-map">Mapa Demonstração</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-about">
+                <a href="#" class="footer-logo">IMAP<span>ONE</span></a>
+                <p style="max-width: 400px; margin: 0 auto 1.5rem auto;" data-i18n="footer-desc">Transformamos plantas de loteamentos em experiências digitais interativas. Tecnologia georreferenciada para o mercado imobiliário.</p>
+                <div>
+                    <a href="https://www.instagram.com/imapofficial?igsh=eTVvMWc2ZmVycmp3" style="margin: 0 10px; font-size: 1.2rem;"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/5585996138679" style="margin: 0 10px; font-size: 1.2rem;"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" style="margin: 0 10px; font-size: 1.2rem;"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4 data-i18n="nav-footer">Navegação</h4>
+                <ul>
+                    <li><a href="#inicio" data-i18n="nav-home">Início</a></li>
+                    <li><a href="#funcionalidades" data-i18n="nav-features">Funcionalidades</a></li>
+                    <li><a href="#diferenciais" data-i18n="nav-diff">Diferenciais</a></li>
+                    <li><a href="#faq" data-i18n="nav-faq">Dúvidas</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4 data-i18n="res-footer">Recursos</h4>
+                <ul>
+                    <li><a href="#" data-i18n="res-1">Mapas Interativos</a></li>
+                    <li><a href="#" data-i18n="res-2">Gestão de Status</a></li>
+                    <li><a href="#" data-i18n="res-3">Arquivo Standalone</a></li>
+                    <li><a href="#" data-i18n="res-4">Hospedagem Gratuita</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4 data-i18n="contact-footer">Contato</h4>
+                <ul>
+                    <li><i class="fas fa-phone-alt" style="color: var(--primary); margin-right: 8px;"></i> (85) 99613-8679</li>
+                    <li><i class="fas fa-envelope" style="color: var(--primary); margin-right: 8px;"></i> imaponeofficial@gmail.com</li>
+                    <li><i class="fas fa-map-marker-alt" style="color: var(--primary); margin-right: 8px;"></i> Brasil</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Imap One. <span data-i18n="rights">Todos os direitos reservados.</span></p>
+            <p data-i18n="dev-by">Desenvolvido com tecnologia Imap One</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Inicializa animações no scroll
+        AOS.init({
+            once: true,
+            offset: 100,
+            duration: 1000
+        });
+
+        // Lógica do Menu Mobile
+        function toggleMenu() {
+            const nav = document.getElementById('navLinks');
+            const hamburgerIcon = document.querySelector('.hamburger i');
+            
+            nav.classList.toggle('mobile-active');
+            
+            if (nav.classList.contains('mobile-active')) {
+                hamburgerIcon.className = 'fas fa-times';
+            } else {
+                hamburgerIcon.className = 'fas fa-bars';
+            }
+        }
+
+        function closeMenu() {
+            const nav = document.getElementById('navLinks');
+            const hamburgerIcon = document.querySelector('.hamburger i');
+            nav.classList.remove('mobile-active');
+            hamburgerIcon.className = 'fas fa-bars';
+        }
+
+        // Fecha menu ao clicar em links
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', closeMenu);
+        });
+
+        // Lógica do Header mudar ao rolar
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Lógica do FAQ
+        function toggleFaq(element) {
+            const wasActive = element.classList.contains('active');
+            
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            if (!wasActive) {
+                element.classList.add('active');
+            }
+        }
+
+        // ==========================================
+        // SISTEMA DE TRADUÇÃO COMPLETO
+        // ==========================================
+        const translations = {
+            en: {
+                "nav-home": "Home",
+                "nav-features": "Features",
+                "nav-diff": "Differentials",
+                "nav-faq": "FAQ",
+                "hero-sub": "Interactive Maps for Subdivisions",
+                "hero-title": "Visualize and Manage<br>Your Lots on the Map",
+                "hero-text": "Create professional maps of your subdivisions with real-time sales status. Your clients navigate, you control.",
+                "btn-demo": "View Demo",
+                "feat-title": "What You Can Do",
+                "feat-sub": "Essential tools for visual subdivision management.",
+                "card-1-t": "Interactive Maps",
+                "card-1-d": "Transform your subdivision plan into a navigable map. Your clients explore every lot with zoom, satellite, and filters.",
+                "card-2-t": "Real-time Status",
+                "card-2-d": "Update lot status (Available, Reserved, Sold) and see changes instantly on the online map.",
+                "card-3-t": "GeoJSON Import",
+                "card-3-d": "Already have the vector file? Import directly in GeoJSON format and have all lots mapped automatically.",
+                "card-4-t": "Hosting Included",
+                "card-4-d": "We publish your map for free on GitHub Pages. No hassle, no extra server costs.",
+                "card-5-t": "WhatsApp Button",
+                "card-5-d": "Each available lot has a direct button to your WhatsApp. The client clicks and starts the conversation with you.",
+                "card-6-t": "100% Responsive",
+                "card-6-d": "Works perfectly on mobile, tablet, and desktop. Your clients access it from any device.",
+                "diff-title": "Our Great Differentiator",
+                "diff-text": "Many platforms lock you into static creatives, without interactivity for the client. <strong>We offer the solution</strong> — you send the link to your clients and the map is ready to use anywhere.",
+                "diff-li-1": "<strong>Complete HTML file</strong> with the working map",
+                "diff-li-2": "<strong>Free hosting:</strong> your subdivision always online",
+                "diff-li-3": "<strong>Integrated admin panel</strong> with password for you to update lots",
+                "diff-li-4": "<strong>Cloud synced:</strong> changes appear on all devices",
+                "diff-li-5": "<strong>Custom route:</strong> the map shows the client the distance and estimated time",
+                "diff-highlight": "Ideal for those who want to facilitate real-time lot management, offering a Premium experience to their clients.",
+                "faq-title": "Frequently Asked Questions",
+                "faq-sub": "Clear your doubts about the system.",
+                "faq-1-q": "How does the pricing model work?",
+                "faq-1-a": "We work with two options: <strong>Static Digital Subdivision</strong> (one-time payment) and <strong>Managed Subdivision</strong> (setup + monthly fee for panel access). Contact us to know the values and choose the best plan for you.",
+                "faq-2-q": "What is the standalone file?",
+                "faq-2-a": "It is a complete and independent HTML file with your subdivision map. You can host it on GitHub Pages (free), Vercel, etc., with your own domain or use our free hosting. Includes admin panel with password for you to manage lot status.",
+                "faq-3-q": "Do I need technical knowledge?",
+                "faq-3-a": "No! You provide the plan (PDF, DWG, or GeoJSON) and we create everything. To update lot status, just access the panel with your password — simple as using WhatsApp.",
+                "faq-4-q": "Does the map work offline?",
+                "faq-4-a": "No. The map needs internet to load satellite layers and synchronize lot data. But data consumption is minimal and optimized.",
+                "faq-5-q": "Can I customize colors and icons?",
+                "faq-5-a": "No. Colors for each type of area (lots, streets, green areas, lakes) are standard. If you have a different area type, we can customize the color.",
+                "faq-6-q": "How many lots can I register?",
+                "faq-6-a": "The base price covers up to 100 lots. For every 50 additional lots, there is an increase in the setup fee. Contact us for a custom quote if your project is larger.",
+                "faq-7-q": "Is the data safe?",
+                "faq-7-a": "Yes. We use Supabase, a robust infrastructure with encryption and automatic backups. Only you have access to the administrative panel through your exclusive password.",
+                "cta-title": "Ready to Modernize Your Sales?",
+                "cta-text": "Get in touch and receive a personalized quote for your subdivision.",
+                "btn-contact": "Request Quote",
+                "btn-map": "Demo Map",
+                "footer-desc": "We transform subdivision plans into interactive digital experiences. Georeferenced technology for the real estate market.",
+                "nav-footer": "Navigation",
+                "res-footer": "Resources",
+                "res-1": "Interactive Maps",
+                "res-2": "Status Management",
+                "res-3": "Standalone File",
+                "res-4": "Free Hosting",
+                "contact-footer": "Contact",
+                "rights": "All rights reserved.",
+                "dev-by": "Developed with Imap One technology"
+            }
+        };
+
+        let currentLang = 'pt';
+        function toggleLanguage() {
+            const btn = document.getElementById('lang-toggle');
+            if (currentLang === 'pt') {
+                currentLang = 'en';
+                btn.textContent = 'EN';
+                
+                // Aplicar traduções
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (translations.en[key]) {
+                        el.innerHTML = translations.en[key];
+                    }
+                });
+            } else { 
+                // Recarregar para voltar ao original (mais seguro para garantir integridade do DOM)
+                window.location.reload(); 
+            }
+        }
+
+        // Efeito de Partículas no Canvas
+        const canvas = document.getElementById('hero-canvas');
+        const ctx = canvas.getContext('2d');
+        let particlesArray;
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor(x, y, directionX, directionY, size, color) {
+                this.x = x;
+                this.y = y;
+                this.directionX = directionX;
+                this.directionY = directionY;
+                this.size = size;
+                this.color = color;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+            update() {
+                if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
+                if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
+                this.x += this.directionX;
+                this.y += this.directionY;
+                this.draw();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            let numberOfParticles = (canvas.height * canvas.width) / 15000;
+            for (let i = 0; i < numberOfParticles; i++) {
+                let size = (Math.random() * 2) + 1;
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * 0.4) - 0.2;
+                let directionY = (Math.random() * 0.4) - 0.2;
+                let color = '#D4AF37';
+                particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+            }
+        }
+
+        function animateParticles() {
+            requestAnimationFrame(animateParticles);
+            ctx.clearRect(0, 0, innerWidth, innerHeight);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = innerWidth;
+            canvas.height = innerHeight;
+            initParticles();
+        });
+
+        initParticles();
+        animateParticles();
+    </script>
+</body>
+</html>
