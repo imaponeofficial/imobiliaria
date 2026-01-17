@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imap One | Imóveis</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #D4AF37; /* Dourado */
+            --primary-hover: #b8941e;
+            --dark: #121212;
+            --dark-gray: #181818;
+            --medium-gray: #242424;
+            --light: #EAEAEA;
+            --text-gray: #A0A0A0;
+            --white: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; overflow-x: hidden;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: 'Playfair Display', serif;
+            color: var(--white);
+        }
+
+        a { text-decoration: none; transition: 0.3s; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- UTILITÁRIOS --- */
+        .text-gold { color: var(--primary); }
+        .bg-dark { background-color: var(--dark); }
+        .bg-gray { background-color: var(--dark-gray); }
+
+        /* --- BOTÕES --- */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            border-radius: 0px; 
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-gold {
+            background: var(--primary);
+            color: #000;
+            border: 1px solid var(--primary);
+        }
+        .btn-gold:hover { background: transparent; color: var(--primary); }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--white);
+            color: var(--white);
+        }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* --- HEADER --- */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0; /* Força o alinhamento à esquerda */
+            width: 100%;
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: 0.4s;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            box-sizing: border-box; /* Garante que o padding não aumente a largura */
+        }
+
+        header.scrolled {
+            background: rgba(18, 18, 18, 0.98);
+            padding: 1rem 5%;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--white);
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        .logo span { color: var(--primary); }
+
+        /* Controles do Header (Direita) */
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        /* Botão de Idioma (No Header) */
+        #lang-toggle {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+        }
+        #lang-toggle:hover { background: var(--primary); color: #000; }
+
+        /* Hambúrguer (Sempre Visível) */
+        .hamburger { 
+            display: block; 
+            font-size: 1.5rem; 
+            color: var(--white); 
+            cursor: pointer; 
+            transition: color 0.3s;
+        }
+        .hamburger:hover { color: var(--primary); }
+
+        /* Menu de Navegação (Escondido por padrão) */
+        .nav-links {
+            display: none; 
+            flex-direction: column;
+            position: fixed;
+            top: 80px; 
+            left: 0;
+            right: 0;
+            background: rgba(18, 18, 18, 0.98);
+            padding: 2rem;
+            gap: 1.5rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            text-align: center;
+            z-index: 999;
+        }
+        
+        .nav-links.mobile-active {
+            display: flex;
+            animation: slideDown 0.3s ease;
+        }
+
+        /* --- ATUALIZAÇÃO DO ESTILO DOS LINKS (IGUAL AO ARQUIVO CORRETORES) --- */
+        .nav-links a { 
+            font-size: 0.85rem; /* Ajustado para 0.85rem igual corretores */
+            font-weight: 500; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; /* Ajustado para 1px igual corretores */
+            color: #ccc; 
+            padding: 10px;
+            transition: 0.3s;
+        }
+        .nav-links a:hover { color: var(--primary); }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- HERO --- */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)), 
+                        url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1920&q=80') center/cover fixed;
+            display: flex; align-items: center; justify-content: center; text-align: center; position: relative;
+        }
+        .hero-content { max-width: 950px; padding: 0 2rem; }
+        .hero-subtitle { color: var(--primary); text-transform: uppercase; letter-spacing: 4px; font-size: 1.2rem; margin-bottom: 1.5rem; font-weight: 600; font-family: 'Montserrat', sans-serif; }
+        .hero-title { font-size: 5rem; margin-bottom: 1.5rem; line-height: 1.1; color: var(--white); }
+        .hero-text { font-size: 1.2rem; margin-bottom: 3rem; color: #f0f0f0; font-weight: 300; max-width: 700px; margin: 0 auto 3rem; }
+        .hero-buttons { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+
+        /* --- SECTIONS --- */
+        section { padding: 7rem 5%; position: relative; }
+        .section-header { text-align: center; margin-bottom: 5rem; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .section-label { color: var(--primary); text-transform: uppercase; letter-spacing: 3px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; display: block; }
+        .section-header h2 { font-size: 2.8rem; margin-bottom: 1rem; }
+        .section-header p { color: var(--text-gray); font-size: 1.2rem; max-width: 600px; margin: 0 auto; }
+        .divider { width: 80px; height: 2px; background-color: var(--primary); margin: 1.5rem auto; }
+
+        /* --- INVESTIMENTO (Estilo Index) --- */
+        .invest-section {
+            background-color: var(--dark-gray);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 6rem;
+            align-items: center;
+        }
+
+        .invest-info h3 { font-size: 2rem; margin-bottom: 1.8rem; font-family: 'Playfair Display', serif; }
+        .invest-info p { color: var(--text-gray); margin-bottom: 2rem; text-align: justify; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+        }
+        
+        .stat-item h4 { font-size: 2.5rem; color: var(--primary); font-family: 'Montserrat', sans-serif; font-weight: 700; margin-top: 1.5rem;}
+        .stat-item p { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; color: var(--white); margin-top: 0.3rem; }
+
+        .invest-image img { width: 100%; border-radius: 4px; box-shadow: 20px 20px 0px rgba(212, 175, 55, 0.1); }
+
+        /* --- TECNOLOGIA --- */
+        .tech-section { background-color: var(--dark); }
+        .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; margin-top: 4rem; }
+        .tech-card { background: rgba(255,255,255,0.03); padding: 3rem 2.5rem; border: 1px solid rgba(255,255,255,0.05); text-align: center; transition: 0.4s; }
+        .tech-card:hover { border-color: var(--primary); background: rgba(255,255,255,0.05); transform: translateY(-8px); }
+        .tech-icon { font-size: 2.5rem; color: var(--primary); margin-bottom: 1.5rem; display: inline-block; }
+        .tech-card h4 { font-size: 1.2rem; margin-bottom: 1rem; font-weight: 600; font-family: 'Montserrat', sans-serif; }
+        .tech-card p { color: var(--text-gray); font-size: 0.95rem; }
+
+        /* --- DESTINOS --- */
+        .destinos-section { background: var(--dark-gray); }
+        .destinos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+        .destino-card { position: relative; height: 500px; overflow: hidden; cursor: pointer; }
+        .destino-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s; filter: grayscale(30%); }
+        .destino-card:hover img { transform: scale(1.1); filter: grayscale(0%); }
+        .destino-overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 2rem; background: linear-gradient(to top, #000, transparent); }
+        .destino-overlay h3 { font-size: 1.5rem; margin-bottom: 5px; }
+        .destino-overlay span { color: var(--primary); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; }
+        .destino-overlay p { opacity: 0; transform: translateY(10px); transition: 0.4s; color: #ccc; font-size: 0.9rem; margin-top: 10px; }
+        .destino-card:hover .destino-overlay p { opacity: 1; transform: translateY(0); }
+
+        /* --- LIFESTYLE (Correção do Grid) --- */
+        .lifestyle-section { background: var(--dark); }
+        
+        /* Desktop: Grid Mosaic */
+        .lifestyle-grid { 
+            display: grid; 
+            grid-template-columns: 2fr 1fr 1fr; 
+            grid-template-rows: repeat(2, 350px); 
+            gap: 1.5rem; 
+        }
+        
+        .lifestyle-item { position: relative; overflow: hidden; }
+        .lifestyle-item.large { grid-row: span 2; }
+        
+        .lifestyle-item img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .lifestyle-item:hover img { transform: scale(1.1); }
+        
+        .lifestyle-label {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8); padding: 1rem 2.5rem; border: 2px solid var(--white);
+            color: var(--white); text-transform: uppercase; font-size: 0.9rem; letter-spacing: 2px; font-weight: 600;
+            opacity: 0; transition: 0.4s;
+        }
+        .lifestyle-item:hover .lifestyle-label { opacity: 1; }
+
+        /* --- PROCESSO --- */
+        .processo-section { background: var(--dark-gray); }
+        .processo-timeline { max-width: 900px; margin: 0 auto; position: relative; }
+        .processo-timeline::before { content: ''; position: absolute; left: 50%; top: 0; bottom: 0; width: 2px; background: var(--primary); transform: translateX(-50%); opacity: 0.3; }
+        .processo-step { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 4rem; position: relative; }
+        .processo-step:nth-child(even) .processo-content { order: 2; }
+        .processo-number {
+            width: 60px; height: 60px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; font-weight: 800; color: #000; position: absolute; left: 50%; transform: translateX(-50%); z-index: 2;
+        }
+        .processo-content { background: rgba(255,255,255,0.03); padding: 2.5rem; border: 1px solid rgba(255,255,255,0.05); }
+
+        /* --- DEPOIMENTOS & FAQ --- */
+        .depoimentos-section { background: var(--dark); }
+        .depoimentos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2.5rem; }
+        .depoimento-card { background: rgba(255,255,255,0.03); padding: 3rem; border: 1px solid rgba(255,255,255,0.05); position: relative; }
+        .depoimento-card::before { content: '"'; position: absolute; top: 1rem; left: 2rem; font-size: 5rem; color: var(--primary); opacity: 0.3; font-family: 'Playfair Display', serif; }
+        .depoimento-texto { font-style: italic; margin-bottom: 2rem; color: #ccc; line-height: 1.8; }
+        .depoimento-autor { display: flex; align-items: center; gap: 1rem; }
+        .depoimento-avatar { width: 50px; height: 50px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; }
+
+        .faq-section { background-color: var(--medium-gray); }
+        .faq-container { max-width: 800px; margin: 0 auto; }
+        .faq-item { border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem; }
+        .faq-question { padding: 1.5rem 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 1.1rem; font-weight: 500; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: 0.4s; color: var(--text-gray); font-size: 0.95rem; }
+        .faq-item.active .faq-answer { padding-bottom: 1.5rem; max-height: 200px; }
+        .faq-item.active .faq-question { color: var(--primary); }
+        .faq-icon { transition: 0.3s; }
+        .faq-item.active .faq-icon { transform: rotate(45deg); color: var(--primary); }
+
+        /* --- CTA FINAL --- */
+        .cta-final {
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.75)),
+                        url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&q=80') fixed center/cover;
+            position: relative; padding: 8rem 5%;
+        }
+        .cta-final h2 { font-size: 3rem; margin-bottom: 1.5rem; }
+        .cta-final p { font-size: 1.2rem; margin-bottom: 2rem; color: #ddd; }
+
+        /* --- FOOTER (Estilo Index) --- */
+        footer {
+            background-color: #050505;
+            padding: 5rem 5% 2rem;
+            border-top: 1px solid #222;
+            color: #777;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 4rem;
+        }
+
+        .footer-logo { font-size: 1.8rem; font-weight: 700; color: var(--white); margin-bottom: 1rem; display: block; letter-spacing: 2px; }
+        .footer-logo span { color: var(--primary); }
+        
+        .footer-col h4 { color: var(--white); margin-bottom: 1.5rem; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; font-family: 'Montserrat', sans-serif; }
+        .footer-col ul li { margin-bottom: 0.8rem; }
+        .footer-col ul li a { font-size: 0.9rem; transition: 0.3s; }
+        .footer-col ul li a:hover { color: var(--primary); padding-left: 5px; }
+
+        .footer-bottom {
+            border-top: 1px solid #222;
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+        }
+
+        /* --- RESPONSIVO --- */
+        @media (max-width: 992px) {
+            .invest-section { grid-template-columns: 1fr; }
+            .processo-timeline::before { display: none; }
+            .processo-step { grid-template-columns: 1fr; }
+            .processo-number { position: relative; left: 0; transform: none; margin-bottom: 1rem; }
+            .footer-content { grid-template-columns: 1fr 1fr; }
+            
+            /* Lifestyle Tablet: Ajuste para 2 colunas */
+            .lifestyle-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(4, 250px); }
+            .lifestyle-item.large { grid-column: span 2; grid-row: span 1; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .footer-content { grid-template-columns: 1fr; text-align: center; }
+            .footer-bottom { flex-direction: column; gap: 1rem; }
+            
+            /* Lifestyle Mobile: Um embaixo do outro (Correção Solicitada) */
+            .lifestyle-grid { 
+                display: flex; 
+                flex-direction: column; 
+                gap: 1.5rem; 
+                height: auto;
+            }
+            .lifestyle-item {
+                width: 100%;
+                height: 300px; /* Altura fixa por item para garantir visibilidade */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header id="header">
+        <div class="logo">imap<span>ONE imóveis</span></div>
+        
+        <div class="header-controls">
+            <div id="lang-toggle" onclick="toggleLanguage()">PT</div>
+            <div class="hamburger"><i class="fas fa-bars"></i></div>
+        </div>
+
+        <nav class="nav-links">
+            <a href="loteamentos/" data-i18n="nav-lots">Loteamentos</a>
+            
+            <a href="#investimento" data-i18n="nav-invest">Investimento</a>
+            <a href="#tecnologia" data-i18n="nav-tech">Tecnologia</a>
+            <a href="#destinos" data-i18n="nav-dest">Destinos</a>
+            <a href="#lifestyle" data-i18n="nav-life">Lifestyle</a>
+            <a href="corretores/" data-i18n="nav-brokers">Corretores</a>
+            <a href="blog/" data-i18n="nav-blog">Blog</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content" data-aos="fade-up">
+            <p class="hero-subtitle">Camocim • Preá • Jericoacoara • Tatajuba</p>
+            <h1 class="hero-title" data-i18n="hero-title">O Tesouro do<br>Litoral Oeste</h1>
+            <p class="hero-text" data-i18n="hero-text">Conectamos investidores e construtoras às áreas mais exclusivas da Rota das Emoções através de inteligência de mercado, geotecnologia e expertise local.</p>
+            
+            <div class="hero-buttons">
+                <a href="https://imapone.vercel.app/" class="btn btn-gold" data-i18n="btn-explore">Acessar Mapa</a>
+                <a href="corretores/" class="btn btn-outline" data-i18n="btn-partner">Seja Parceiro</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="investimento" class="invest-section">
+        <div class="invest-content" data-aos="fade-right">
+            <div class="section-header" style="text-align: left; margin-bottom: 2rem; margin-left: 0;">
+                <h4 class="text-gold" style="text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px;" data-i18n="label-pot">Potencial</h4>
+                <h2 style="margin-bottom: 1rem;" data-i18n="invest-title">Por que investir aqui?</h2>
+            </div>
+            <p data-i18n="invest-text" style="color: var(--text-gray); margin-bottom: 2rem; text-align: justify;">A região de Camocim até Jericoacoara vive um ciclo virtuoso de desenvolvimento impulsionado pelo Aeroporto Regional, pelo turismo de alto padrão (Kitesurf) e pelos investimentos em energia renovável. Terrenos nesta área não são apenas metros quadrados; são ativos em valorização exponencial.</p>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h4>+<span class="counter" data-target="25">0</span>%</h4>
+                    <p data-i18n="stat-1">Valorização anual média</p>
+                </div>
+                <div class="stat-item">
+                    <h4><span class="counter" data-target="300">0</span>k+</h4>
+                    <p data-i18n="stat-2">Turistas por ano</p>
+                </div>
+                <div class="stat-item">
+                    <h4><span class="counter" data-target="40">0</span>km</h4>
+                    <p data-i18n="stat-3">De praias preservadas</p>
+                </div>
+                <div class="stat-item">
+                    <h4>#<span class="counter-reverse" data-target="1">10</span></h4>
+                    <p data-i18n="stat-4">Destino Mundial de Kite</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="invest-image" data-aos="fade-left">
+            <img src="img/primeira.jpg" alt="Construção Moderna">
+        </div>
+    </section>
+
+    <section id="tecnologia" class="tech-section">
+        <div class="section-header" data-aos="fade-up">
+            <p class="section-label" data-i18n="label-tech">TECNOLOGIA</p>
+            <h2 data-i18n="tech-title">Mapa Interativo<br>de Alta Precisão</h2>
+            <div class="divider"></div>
+            <p data-i18n="tech-sub">Somos a primeira imobiliária da região com tecnologia de geolocalização em tempo real, permitindo que você explore imóveis com precisão cirúrgica.</p>
+        </div>
+
+        <div class="tech-grid">
+            <div class="tech-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="tech-icon"><i class="fas fa-map-marked-alt"></i></div>
+                <h4 data-i18n="tech-1-t">Geolocalização Precisa</h4>
+                <p data-i18n="tech-1-d">Veja a localização exata de cada imóvel, limites de terrenos, distância para pontos de interesse e muito mais.</p>
+            </div>
+
+            <div class="tech-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="tech-icon"><i class="fas fa-filter"></i></div>
+                <h4 data-i18n="tech-2-t">Filtros Inteligentes</h4>
+                <p data-i18n="tech-2-d">Busque por tipo, preço, área, distância da praia, acesso pavimentado e dezenas de outros critérios.</p>
+            </div>
+
+            <div class="tech-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="tech-icon"><i class="fas fa-satellite"></i></div>
+                <h4 data-i18n="tech-3-t">Imagens de Satélite</h4>
+                <p data-i18n="tech-3-d">Visualize o terreno em alta resolução, com imagens aéreas atualizadas e visão 360º do entorno.</p>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 4rem;">
+            <a href="https://imapone.vercel.app/" class="btn btn-gold" data-i18n="btn-test">Testar Plataforma Agora</a>
+        </div>
+    </section>
+
+    <section id="destinos" class="destinos-section">
+        <div class="section-header" data-aos="fade-up">
+            <p class="section-label" data-i18n="label-dest">DESTINOS</p>
+            <h2 data-i18n="dest-title">Explore as Joias<br>do Litoral Oeste</h2>
+            <div class="divider"></div>
+            <p data-i18n="dest-sub">De vilarejos preservados a destinos internacionais, conheça as principais áreas de atuação da Imap One.</p>
+        </div>
+
+        <div class="destinos-grid">
+            <div class="destino-card" data-aos="fade-up" data-aos-delay="100">
+                <img src="img/guriu.jpg" alt="Jericoacoara">
+                <div class="destino-overlay">
+                    <h3>Jericoacoara</h3>
+                    <span data-i18n="dest-1-tag">Hub Internacional</span>
+                    <p data-i18n="dest-1-desc">O destino mais famoso do Ceará, com infraestrutura consolidada e valorização constante.</p>
+                </div>
+            </div>
+
+            <div class="destino-card" data-aos="fade-up" data-aos-delay="200">
+                <img src="img/prea1.jpg" alt="Preá">
+                <div class="destino-overlay">
+                    <h3>Preá</h3>
+                    <span data-i18n="dest-2-tag">Paraíso do Kitesurf</span>
+                    <p data-i18n="dest-2-desc">Ventos constantes e lagoas cristalinas atraem kitesurfistas do mundo todo.</p>
+                </div>
+            </div>
+
+            <div class="destino-card" data-aos="fade-up" data-aos-delay="300">
+                <img src="img/tatajuba.jpg" alt="Tatajuba">
+                <div class="destino-overlay">
+                    <h3>Tatajuba</h3>
+                    <span data-i18n="dest-3-tag">Dunas & Lagoas</span>
+                    <p data-i18n="dest-3-desc">Natureza intocada, ideal para quem busca tranquilidade e conexão com o meio ambiente.</p>
+                </div>
+            </div>
+
+            <div class="destino-card" data-aos="fade-up" data-aos-delay="400">
+                <img src="img/camocim.jpg" alt="Camocim">
+                <div class="destino-overlay">
+                    <h3>Camocim</h3>
+                    <span data-i18n="dest-4-tag">A Cidade do Vento</span>
+                    <p data-i18n="dest-4-desc">Centro urbano da região, com comércio, serviços e acesso facilitado.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="lifestyle" class="lifestyle-section">
+        <div class="section-header" data-aos="fade-up">
+            <p class="section-label" data-i18n="label-life">LIFESTYLE</p>
+            <h2 data-i18n="life-title">Mais que um Imóvel,<br>um Estilo de Vida</h2>
+            <div class="divider"></div>
+            <p data-i18n="life-sub">Viver aqui é estar conectado com a natureza, o esporte e o bem-estar. Descubra o que torna esta região única.</p>
+        </div>
+
+        <div class="lifestyle-grid">
+            <div class="lifestyle-item large" data-aos="zoom-in">
+                <img src="img/kitesurf.jpg" alt="Kitesurf">
+                <div class="lifestyle-label">Kitesurf</div>
+            </div>
+            <div class="lifestyle-item" data-aos="zoom-in" data-aos-delay="100">
+                <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80" alt="Gastronomia">
+                <div class="lifestyle-label" data-i18n="life-food">Gastronomia</div>
+            </div>
+            <div class="lifestyle-item" data-aos="zoom-in" data-aos-delay="200">
+                <img src="img/praia.jpg" alt="Praias">
+                <div class="lifestyle-label" data-i18n="life-beach">Praias</div>
+            </div>
+            <div class="lifestyle-item" data-aos="zoom-in" data-aos-delay="300">
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80" alt="Arquitetura">
+                <div class="lifestyle-label" data-i18n="life-arch">Arquitetura</div>
+            </div>
+            <div class="lifestyle-item" data-aos="zoom-in" data-aos-delay="400">
+                <img src="img/natureza.png" alt="Natureza">
+                <div class="lifestyle-label" data-i18n="life-nat">Natureza</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="processo-section">
+        <div class="section-header" data-aos="fade-up">
+            <p class="section-label" data-i18n="label-proc">PROCESSO</p>
+            <h2 data-i18n="proc-title">Como Funciona</h2>
+            <div class="divider"></div>
+            <p data-i18n="proc-sub">Do primeiro contato até a escritura, te acompanhamos em cada etapa.</p>
+        </div>
+
+        <div class="processo-timeline">
+            <div class="processo-step" data-aos="fade-up">
+                <div class="processo-number">1</div>
+                <div class="processo-content">
+                    <h4 data-i18n="proc-1-t">Consulta Inicial</h4>
+                    <p data-i18n="proc-1-d">Entendemos suas necessidades, orçamento e objetivos. Apresentamos opções no mapa interativo.</p>
+                </div>
+            </div>
+
+            <div class="processo-step" data-aos="fade-up">
+                <div class="processo-number">2</div>
+                <div></div>
+                <div class="processo-content">
+                    <h4 data-i18n="proc-2-t">Visita ao Imóvel</h4>
+                    <p data-i18n="proc-2-d">Agendamos visitas presenciais ou virtuais. Mostramos o terreno, entorno e potencial de valorização.</p>
+                </div>
+            </div>
+
+            <div class="processo-step" data-aos="fade-up">
+                <div class="processo-number">3</div>
+                <div class="processo-content">
+                    <h4 data-i18n="proc-3-t">Análise Jurídica</h4>
+                    <p data-i18n="proc-3-d">Verificamos documentação, matrículas, certidões e garantimos total segurança na transação.</p>
+                </div>
+            </div>
+
+            <div class="processo-step" data-aos="fade-up">
+                <div class="processo-number">4</div>
+                <div></div>
+                <div class="processo-content">
+                    <h4 data-i18n="proc-4-t">Negociação & Fechamento</h4>
+                    <p data-i18n="proc-4-d">Intermediamos a negociação, elaboramos o contrato e acompanhamos até a escritura definitiva.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="depoimentos-section">
+        <div class="section-header" data-aos="fade-up">
+            <p class="section-label" data-i18n="label-depo">DEPOIMENTOS</p>
+            <h2 data-i18n="depo-title">O que Nossos<br>Clientes Dizem</h2>
+            <div class="divider"></div>
+        </div>
+
+        <div class="depoimentos-grid">
+            <div class="depoimento-card" data-aos="fade-up" data-aos-delay="100">
+                <p class="depoimento-texto" data-i18n="depo-1">"O mapa interativo da Imap One revolucionou minha busca. Consegui visualizar dezenas de terrenos sem sair de casa e fechar um ótimo negócio em Preá."</p>
+                <div class="depoimento-autor">
+                    <div class="depoimento-avatar">RC</div>
+                    <div class="depoimento-info"><h5>Roberto Costa</h5><span>Investidor • São Paulo</span></div>
+                </div>
+            </div>
+
+            <div class="depoimento-card" data-aos="fade-up" data-aos-delay="200">
+                <p class="depoimento-texto" data-i18n="depo-2">"Como corretor parceiro, tenho acesso a ferramentas que outras imobiliárias não oferecem. Minhas vendas triplicaram desde que me associei."</p>
+                <div class="depoimento-autor">
+                    <div class="depoimento-avatar">MS</div>
+                    <div class="depoimento-info"><h5>Mariana Silva</h5><span>Corretora Parceira • Fortaleza</span></div>
+                </div>
+            </div>
+
+            <div class="depoimento-card" data-aos="fade-up" data-aos-delay="300">
+                <p class="depoimento-texto" data-i18n="depo-3">"Profissionalismo e tecnologia em doses iguais. A equipe me ajudou desde a escolha do terreno até a regularização. Recomendo!"</p>
+                <div class="depoimento-autor">
+                    <div class="depoimento-avatar">PA</div>
+                    <div class="depoimento-info"><h5>Paulo Andrade</h5><span>Empresário • Rio de Janeiro</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq-section">
+        <div class="section-header" data-aos="fade-up">
+            <p class="section-label">FAQ</p>
+            <h2 data-i18n="faq-title">Perguntas Frequentes</h2>
+            <div class="divider"></div>
+        </div>
+
+        <div class="faq-container">
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question"><span data-i18n="faq-1-q">Como funciona o mapa interativo?</span> <i class="fas fa-plus faq-icon"></i></div>
+                <div class="faq-answer" data-i18n="faq-1-a">Nosso mapa utiliza geolocalização de alta precisão para mostrar imóveis, limites de terrenos, pontos de interesse e infraestrutura em tempo real.</div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question"><span data-i18n="faq-2-q">A Imap One faz parcerias com corretores?</span> <i class="fas fa-plus faq-icon"></i></div>
+                <div class="faq-answer" data-i18n="faq-2-a">Sim! Se você é corretor autônomo e tem imóveis na região (ou quer captar), pode se cadastrar como parceiro e utilizar nossa plataforma.</div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question"><span data-i18n="faq-3-q">Vocês trabalham com loteamentos e incorporações?</span> <i class="fas fa-plus faq-icon"></i></div>
+                <div class="faq-answer" data-i18n="faq-3-a">Sim. Somos especialistas em gestão de vendas para loteamentos, oferecendo mapa de disponibilidade online, gestão de contratos e marketing digital focado.</div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question"><span data-i18n="faq-4-q">Quais são as formas de pagamento?</span> <i class="fas fa-plus faq-icon"></i></div>
+                <div class="faq-answer" data-i18n="faq-4-a">Trabalhamos com diversas modalidades: à vista, parcelado direto com o proprietário, financiamento bancário e permuta.</div>
+            </div>
+
+            <div class="faq-item" onclick="toggleFaq(this)">
+                <div class="faq-question"><span data-i18n="faq-5-q">Como garantem a segurança jurídica?</span> <i class="fas fa-plus faq-icon"></i></div>
+                <div class="faq-answer" data-i18n="faq-5-a">Todos os imóveis passam por análise documental rigorosa. Verificamos matrículas, certidões negativas, regularidade fiscal e ambiental.</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-final">
+        <div data-aos="zoom-in">
+            <h2 data-i18n="cta-title">Encontre Seu Lugar ao Sol</h2>
+            <p data-i18n="cta-text">Seja para investir, construir ou realizar o sonho da casa na praia.<br>A oportunidade está aqui. O momento é agora.</p>
+            <a href="https://imapone.vercel.app/" class="btn btn-gold" data-i18n="btn-map">Explorar Imóveis no Mapa</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-about">
+                <a href="#" class="footer-logo">IMAP<span>ONE</span></a>
+                <p data-i18n="footer-text">Inovação imobiliária no litoral do Ceará. Unimos tecnologia e expertise local para entregar os melhores negócios em Camocim, Jeri e região.</p>
+                <div style="margin-top: 1.5rem;">
+                    <a href="https://www.instagram.com/imapofficial?igsh=eTVvMWc2ZmVycmp3" style="margin-right: 15px; font-size: 1.2rem;"><i class="fab fa-instagram"></i></a>
+                    <a href="https://wa.me/5585996138679" style="margin-right: 15px; font-size: 1.2rem;"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" style="font-size: 1.2rem;"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4 data-i18n="footer-nav">Navegação</h4>
+                <ul>
+                    <li><a href="https://imapone.vercel.app/" data-i18n="nav-map">Mapa de Imóveis</a></li>
+                    <li><a href="#investimento" data-i18n="nav-invest">Investimento</a></li>
+                    <li><a href="#tecnologia" data-i18n="nav-tech">Tecnologia</a></li>
+                    <li><a href="#destinos" data-i18n="nav-dest">Destinos</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4 data-i18n="footer-dest">Regiões</h4>
+                <ul>
+                    <li><a href="index.html?search=Camocim">Camocim / Maceió</a></li>
+                    <li><a href="index.html?search=Tatajuba">Tatajuba / Guriú</a></li>
+                    <li><a href="index.html?search=Jeri">Jeri / Preá</a></li>
+                    <li><a href="index.html?search=Sobral">Sobral / Serra</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4 data-i18n="footer-contact">Contato</h4>
+                <ul>
+                    <li><i class="fas fa-phone-alt text-gold"></i> (85) 99613-8679</li>
+                    <li><i class="fas fa-envelope text-gold"></i> imaponeofficial@gmail.com</li>
+                    <li><i class="fas fa-map-marker-alt text-gold"></i> Brasil</li>
+                    <li style="margin-top: 1rem;"><a href="corretores/" style="color: var(--primary);" data-i18n="footer-work">Trabalhe Conosco</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Imap One. Todos os direitos reservados.</p>
+            <p>Desenvolvido com tecnologia Imap One</p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Animações AOS
+        AOS.init({ duration: 1000, once: true });
+
+        // Header Sticky
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // FAQ Toggle
+        function toggleFaq(element) {
+            const wasActive = element.classList.contains('active');
+            
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            if (!wasActive) {
+                element.classList.add('active');
+            }
+        }
+
+        // ========== ANIMAÇÃO DOS NÚMEROS (Estilo Index) ==========
+        let animationTriggered = false;
+
+        function animateCounter(element, target, duration = 3000) {
+            let start = 0;
+            const increment = target / (duration / 16); // 60fps
+            
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    element.textContent = Math.floor(target);
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(start);
+                }
+            }, 16);
+        }
+
+        function animateCounterReverse(element, target, duration = 3000) {
+            let start = 10;
+            const decrement = (start - target) / (duration / 16);
+            
+            const timer = setInterval(() => {
+                start -= decrement;
+                if (start <= target) {
+                    element.textContent = Math.floor(target);
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(start);
+                }
+            }, 16);
+        }
+
+        function startCountAnimation() {
+            if (animationTriggered) return;
+            
+            const statsGrid = document.querySelector('.stats-grid');
+            if (!statsGrid) return;
+
+            const rect = statsGrid.getBoundingClientRect();
+            const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+
+            if (isVisible) {
+                animationTriggered = true;
+                
+                // Anima contadores normais
+                document.querySelectorAll('.counter').forEach(counter => {
+                    const target = parseInt(counter.getAttribute('data-target'));
+                    animateCounter(counter, target);
+                });
+
+                // Anima contador reverso (#10 → #1)
+                document.querySelectorAll('.counter-reverse').forEach(counter => {
+                    const target = parseInt(counter.getAttribute('data-target'));
+                    animateCounterReverse(counter, target);
+                });
+            }
+        }
+
+        window.addEventListener('scroll', startCountAnimation);
+        window.addEventListener('load', startCountAnimation);
+        
+        // Menu Hambúrguer (Comportamento Slide Down)
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        if (hamburger && navLinks) {
+            hamburger.addEventListener('click', function() {
+                navLinks.classList.toggle('mobile-active');
+                
+                // Muda ícone do hambúrguer
+                const icon = this.querySelector('i');
+                if (navLinks.classList.contains('mobile-active')) {
+                    icon.className = 'fas fa-times';
+                } else {
+                    icon.className = 'fas fa-bars';
+                }
+            });
+
+            // Fecha menu ao clicar em um link
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', function() {
+                    navLinks.classList.remove('mobile-active');
+                    hamburger.querySelector('i').className = 'fas fa-bars';
+                });
+            });
+        }
+
+        // TRADUÇÃO (Integrada)
+        const translations = {
+            en: {
+                "nav-lots": "Subdivisions", // ADICIONADO AQUI
+                "nav-invest": "Investment", "nav-tech": "Technology", "nav-dest": "Destinations",
+                "nav-life": "Lifestyle", "nav-brokers": "Brokers", "nav-blog": "Blog", "btn-map": "Access Map",
+                "hero-title": "The Treasure of<br>West Coast", "hero-text": "Connecting investors and builders to the most exclusive areas of the Route of Emotions.",
+                "btn-explore": "Explore Properties", "btn-partner": "Become a Partner", "label-pot": "POTENTIAL",
+                "invest-title": "Why invest here?", "invest-text": "The region from Camocim to Jericoacoara is experiencing a virtuous cycle of development.",
+                "stat-1": "Annual Appreciation", "stat-2": "Tourists per Year", "stat-3": "Preserved Beaches", "stat-4": "World Kite Destination",
+                "label-tech": "TECHNOLOGY", "tech-title": "High Precision<br>Interactive Map", "tech-sub": "We are the first real estate agency in the region with real-time geolocation.",
+                "tech-1-t": "Precise Geolocation", "tech-1-d": "See exact location of each property, boundaries and distance to points of interest.",
+                "tech-2-t": "Smart Filters", "tech-2-d": "Search by type, price, area, distance from beach and paved access.",
+                "tech-3-t": "Satellite Images", "tech-3-d": "View land in high resolution with updated aerial images.",
+                "btn-test": "Test Platform Now", "label-dest": "DESTINATIONS", "dest-title": "Explore the Jewels<br>of the West Coast",
+                "dest-sub": "From preserved villages to international destinations.", "dest-1-tag": "International Hub", "dest-1-desc": "Ceará's most famous destination.",
+                "dest-2-tag": "Kitesurf Paradise", "dest-2-desc": "Constant winds and crystal clear lagoons.", "dest-3-tag": "Dunes & Lagoons", "dest-3-desc": "Untouched nature.",
+                "dest-4-tag": "City of Wind", "dest-4-desc": "Urban center of the region.", "label-life": "LIFESTYLE", "life-title": "More than a Property,<br>a Lifestyle",
+                "life-sub": "Living here is connecting with nature, sports and well-being.", "life-food": "Gastronomy", "life-beach": "Beaches", "life-arch": "Architecture", "life-nat": "Nature",
+                "label-proc": "PROCESS", "proc-title": "How It Works", "proc-sub": "From first contact to the deed, we accompany you.",
+                "proc-1-t": "Initial Consultation", "proc-1-d": "We understand your needs and budget.", "proc-2-t": "Property Visit", "proc-2-d": "In-person or virtual visits.",
+                "proc-3-t": "Legal Analysis", "proc-3-d": "We verify documentation and ensure security.", "proc-4-t": "Negotiation & Closing", "proc-4-d": "We mediate negotiation and prepare contracts.",
+                "label-depo": "TESTIMONIALS", "depo-title": "What Our<br>Clients Say", "depo-1": "\"The interactive map revolutionized my search.\"", "depo-2": "\"My sales tripled since I joined.\"", "depo-3": "\"Professionalism and technology in equal doses.\"",
+                "faq-title": "Frequently Asked Questions", "faq-1-q": "How does the map work?", "faq-1-a": "Uses high-precision geolocation.", "faq-2-q": "Do you partner with brokers?", "faq-2-a": "Yes! Freelance brokers can register.",
+                "faq-3-q": "Do you work with subdivisions?", "faq-3-a": "Yes. We specialize in sales management.", "faq-4-q": "What are payment methods?", "faq-4-a": "Cash, installments, financing.",
+                "faq-5-q": "How do you ensure legal security?", "faq-5-a": "Rigorous documentation analysis.", "cta-title": "Find Your Place in the Sun", "cta-text": "Whether to invest, build or live.",
+                "footer-text": "Real estate innovation on the coast of Ceará.", "footer-nav": "Navigation", "nav-map": "Property Map", "footer-dest": "Destinations", "footer-contact": "Contact", "footer-work": "Work with Us"
+            }
+        };
+
+        let currentLang = 'pt';
+        function toggleLanguage() {
+            const btn = document.getElementById('lang-toggle');
+            if (currentLang === 'pt') {
+                currentLang = 'en';
+                btn.textContent = 'EN';
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (translations.en[key]) el.innerHTML = translations.en[key];
+                });
+            } else { window.location.reload(); }
+        }
+    </script>
+</body>
+</html>
